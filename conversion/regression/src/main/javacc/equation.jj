@@ -1,0 +1,207 @@
+/*
+ * Copyright (c) 2011 University of Tartu
+ */
+PARSER_BEGIN(EquationParser)
+package org.qsardb.conversion.regression;
+
+import java.io.*;
+import java.util.*;
+
+public class EquationParser {
+
+	public EquationParser(){
+		this(new StringReader(""));
+	}
+}
+PARSER_END(EquationParser)
+
+<DEFAULT>
+SKIP :
+{
+	" "
+}
+
+<DEFAULT>
+TOKEN :
+{
+	< EQUALS : "=" >
+	|
+	< LPAREN : "(" >
+	|
+	< PLUSMINUS : [ "\u00b1", "\u2213" ] >
+	|
+	< RPAREN : ")" >
+	|
+	< SIGN : [ "+", "-" ] >
+	|
+	< STAR : "*" >
+}
+
+<DEFAULT>
+TOKEN :
+{
+	< IDENTIFIER : <LETTER> ( <LETTER> | <DIGIT> )* >
+	|
+	< #DIGIT : [ "0"-"9" ] >
+	|
+	< #LETTER : [ "a"-"z", "A"-"Z" ] >
+}
+
+<DEFAULT>
+TOKEN :
+{
+	< INTEGER_VALUE : 
+		"0"
+		|
+		[ "1"-"9" ] ( [ "0"-"9" ] )* 
+	>
+	|
+	< FLOATING_POINT_VALUE : 
+		( [ "0"-"9" ] )+ "." ( [ "0"-"9" ] )* ( <EXPONENT> )?
+		|
+		( [ "0"-"9" ] )+ <EXPONENT>
+		|
+		"." ( [ "0"-"9" ] )+ ( <EXPONENT> )?
+	>
+	|
+	< #EXPONENT : [ "e", "E" ] ( [ "+", "-" ] )? ( [ "0"-"9" ] )+ >
+}
+
+public Equation parseEquation(String string) :
+{
+	ReInit(new StringReader(string));
+
+	Equation equation = new Equation();
+
+	String identifier;
+	List<Equation.Term> terms;
+}
+{
+	identifier = LeftHandSide() <EQUALS> terms = RightHandSide() <EOF>
+
+	{
+		equation.setIdentifier(identifier);
+		equation.setTerms(terms);
+
+		return equation;
+	}
+}
+
+private String LeftHandSide() :
+{
+	String identifier;
+}
+{
+	identifier = Variable()
+
+	{
+		return identifier;
+	}
+}
+
+public List<Equation.Term> parseRightHandSide(String string) :
+{
+	ReInit(new StringReader(string));
+
+	List<Equation.Term> terms;
+}
+{
+	terms = RightHandSide() <EOF>
+
+	{
+		return terms;
+	}
+}
+
+private List<Equation.Term> RightHandSide() :
+{
+	List<Equation.Term> terms = new ArrayList<Equation.Term>();
+
+	Token sign = null;
+
+	Equation.Term term;
+}
+{
+	( sign = <SIGN> )? term = Term(sign) { terms.add(term); } ( sign = <SIGN> term = Term(sign) { terms.add(term); } )*
+
+	{
+		return terms;
+	}
+}
+
+private Equation.Term Term(Token sign) :
+{
+	Equation.Term term = new Equation.Term();
+
+	String coefficient = null;
+	String coefficientPrecision = null;
+	String identifier = null;
+}
+{
+	(
+	LOOKAHEAD( Coefficient() CoefficientPrecision() )
+	coefficient = Coefficient() coefficientPrecision = CoefficientPrecision() ( identifier = Variable() )? 
+	|
+	coefficient = Coefficient() ( identifier = Variable() )?
+	)
+
+	{
+		if(sign != null && "-".equals(sign.image)){
+			coefficient = ("-" + coefficient);
+		}
+
+		term.setCoefficient(coefficient);
+		term.setCoefficientPrecision(coefficientPrecision);
+		term.setIdentifier(identifier);
+
+		return term;
+	}
+}
+
+private String Coefficient() :
+{
+	String value;
+}
+{
+	value = Value()
+
+	{
+		return value;
+	}
+}
+
+private String CoefficientPrecision() :
+{
+	String value;
+}
+{
+	( <LPAREN> ( <PLUSMINUS> )? value = Value() <RPAREN> )
+
+	{
+		return value;
+	}
+}
+
+private String Value() :
+{
+	Token token;
+}
+{
+	( token = <INTEGER_VALUE> | token = <FLOATING_POINT_VALUE> )
+
+	{
+		return token.image;
+	}
+}
+
+private String Variable() :
+{
+	Token token;
+}
+{
+	( <STAR> )? ( token = <IDENTIFIER> | ( <LPAREN> token = <IDENTIFIER> <RPAREN> ) )
+ 
+	{
+		return token.image;
+	}
+}

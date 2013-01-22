@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.qsardb</groupId>
+	<artifactId>qsardb-common</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<organization>
+		<name>University of Tartu</name>
+		<url>http://www.ut.ee/en</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>New BSD License</name>
+			<url>http://www.opensource.org/licenses/bsd-license.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>villu.ruusmann</id>
+			<name>Villu Ruusmann</name>
+		</developer>
+		<developer>
+			<id>sulev.sild</id>
+			<name>Sulev Sild</name>
+		</developer>
+	</developers>
+
+	<modules>
+		<module>conversion</module>
+		<module>evaluation</module>
+		<module>resolution</module>
+		<module>validation</module>
+	</modules>
+
+	<scm>
+		<connection>scm:git:https://github.com/qsardb/qsardb-common.git</connection>
+		<developerConnection>scm:git:https://github.com/qsardb/qsardb-common.git</developerConnection>
+		<url>https://github.com/qsardb/qsardb-common.git</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/qsardb/qsardb-common/issues</url>
+	</issueManagement>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.qsardb</groupId>
+				<artifactId>model</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.4</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

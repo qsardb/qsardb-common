@@ -1,0 +1,121 @@
+<?xml version="1.0" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.qsardb</groupId>
+		<artifactId>conversion</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.qsardb.conversion</groupId>
+	<artifactId>qmrf</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.qsardb</groupId>
+			<artifactId>model</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.qsardb.cargo</groupId>
+			<artifactId>structure</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.qsardb.conversion</groupId>
+			<artifactId>regression</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.qsardb.conversion</groupId>
+			<artifactId>sdfile</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.qsardb.conversion</groupId>
+			<artifactId>table</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jvnet.jaxb2_commons</groupId>
+			<artifactId>jaxb2-basics-runtime</artifactId>
+			<version>0.6.4</version>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>download.java.net</id>
+			<url>http://download.java.net/maven/2</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>download.java.net</id>
+			<url>http://download.java.net/maven/2/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/schema</directory>
+				<includes>
+					<include>*.dtd</include>
+				</includes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<args>
+						<arg>-no-header</arg>
+						<arg>-Xequals</arg>
+						<arg>-XhashCode</arg>
+						<arg>-XsuperClass</arg>
+						<arg>-XsuperClass-defaultName=it.jrc.ecb.qmrf.Field</arg>
+						<arg>-XvalueConstructor</arg>
+					</args>
+					<episode>false</episode>
+					<extension>true</extension>
+					<schemaDirectory>src/main/schema</schemaDirectory>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-basics</artifactId>
+						<version>0.6.4</version>
+					</dependency>
+
+					<dependency>
+						<groupId>org.jpmml</groupId>
+						<artifactId>xjc</artifactId>
+						<version>1.0.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+</project>

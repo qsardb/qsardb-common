@@ -1,0 +1,96 @@
+<?xml version="1.0" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.qsardb</groupId>
+		<artifactId>qsardb-common</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.qsardb</groupId>
+	<artifactId>conversion</artifactId>
+	<packaging>pom</packaging>
+
+	<organization>
+		<name>University of Tartu</name>
+		<url>http://www.ut.ee/en</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>New BSD License</name>
+			<url>http://www.opensource.org/licenses/bsd-license.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<modules>
+		<module>codessa</module>
+		<module>csv</module>
+		<module>excel</module>
+		<module>opendocument</module>
+		<module>qmrf</module>
+		<module>regression</module>
+		<module>sdfile</module>
+		<module>spreadsheet</module>
+		<module>table</module>
+	</modules>
+
+	<scm>
+		<connection>scm:git:git@github.com:qsardb/qsardb-conversion.git</connection>
+		<developerConnection>scm:git:git@github.com:qsardb/qsardb-conversion.git</developerConnection>
+		<url>git@github.com:qsardb/qsardb-conversion.git</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/qsardb/qsardb-conversion/issues</url>
+	</issueManagement>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.qsardb.conversion</groupId>
+				<artifactId>regression</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.qsardb.conversion</groupId>
+				<artifactId>sdfile</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.qsardb.conversion</groupId>
+				<artifactId>spreadsheet</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.qsardb.conversion</groupId>
+				<artifactId>table</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-vfs</groupId>
+				<artifactId>commons-vfs</artifactId>
+				<version>1.0</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -1,0 +1,467 @@
+<?xml version="1.0" ?>
+<!--
+Copyright (c) 2011 University of Tartu
+-->
+<jaxb:bindings targetNamespace="http://java.sun.com/xml/ns/jaxb" xmlns:java="http://java.sun.com/java" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" jaxb:extensionBindingPrefixes="java xjc" jaxb:version="2.0">
+
+	<jaxb:bindings schemaLocation="qmrf.xsd" node="/xsd:schema">
+
+		<jaxb:schemaBindings>
+			<jaxb:package
+				name="it.jrc.ecb.qmrf"
+			/>
+		</jaxb:schemaBindings>
+
+		<jaxb:bindings node="//xsd:element[@name='algorithms_catalog']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.EntityCatalog"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='algorithm']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Entity"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='algorithm']/xsd:complexType/xsd:attribute[@name='publication_ref']">
+			<jaxb:property>
+				<jaxb:baseType 
+					name="Publication"
+				/>
+			</jaxb:property>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='algorithm_ref']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.EntityRef"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='algorithm_ref']/xsd:complexType/xsd:attribute[@name='idref']">
+			<jaxb:property>
+				<jaxb:baseType 
+					name="Algorithm"
+				/>
+			</jaxb:property>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='attachment_documents']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.AttachmentData"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='attachment_training_data']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.AttachmentData"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='attachment_validation_data']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.AttachmentData"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='authors_catalog']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.EntityCatalog"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='author']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Entity"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='author_ref']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.EntityRef"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='author_ref']/xsd:complexType/xsd:attribute[@name='idref']">
+			<jaxb:property>
+				<jaxb:baseType 
+					name="Author"
+				/>
+			</jaxb:property>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='Catalogs']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.QMRFObject"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='dependent_var_availability']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.ParameterAvailability"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='dependent_var_availability']/xsd:complexType/xsd:attribute[@name='answer']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="CollectionAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='descriptors_catalog']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.EntityCatalog"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='descriptor']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Entity"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='descriptor']/xsd:complexType/xsd:attribute[@name='publication_ref']">
+			<jaxb:property>
+				<jaxb:baseType 
+					name="Publication"
+				/>
+			</jaxb:property>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='descriptor_ref']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.EntityRef"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='descriptor_ref']/xsd:complexType/xsd:attribute[@name='idref']">
+			<jaxb:property>
+				<jaxb:baseType 
+					name="Descriptor"
+				/>
+			</jaxb:property>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='document']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Attachment"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='document']/xsd:complexType/xsd:attribute[@name='embedded']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="Embedded"
+			/>
+		</jaxb:bindings>
+
+
+		<jaxb:bindings node="//xsd:element[@name='endpoints_catalog']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.EntityCatalog"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='endpoint']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Entity"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='endpoint_ref']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.EntityRef"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='endpoint_ref']/xsd:complexType/xsd:attribute[@name='idref']">
+			<jaxb:property>
+				<jaxb:baseType 
+					name="Endpoint"
+				/>
+			</jaxb:property>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='molecules']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Attachment"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='molecules']/xsd:complexType/xsd:attribute[@name='embedded']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="Embedded"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='publications_catalog']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.EntityCatalog"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='publication']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Entity"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='publication_ref']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.EntityRef"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='publication_ref']/xsd:complexType/xsd:attribute[@name='idref']">
+			<jaxb:property>
+				<jaxb:baseType 
+					name="Publication"
+				/>
+			</jaxb:property>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='QMRF']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.QMRFObject"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='QSAR_Algorithm']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Chapter"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='QSAR_Applicability_domain']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Chapter"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='QMRF_chapters']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.QMRFObject"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='QSAR_Endpoint']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Chapter"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='QSAR_General_information']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Chapter"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='QSAR_identifier']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Chapter"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='QSAR_Interpretation']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Chapter"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='QSAR_Miscelaneous']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Chapter"
+			/>
+			<jaxb:class
+				name="QSARMiscellaneous"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='QSAR_Predictivity']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Chapter"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='QSAR_Robustness']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Chapter"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='QMRF_Summary']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Chapter"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='software_catalog']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.EntityCatalog"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='software']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.Entity"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='software_ref']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.EntityRef"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='software_ref']/xsd:complexType/xsd:attribute[@name='idref']">
+			<jaxb:property>
+				<jaxb:baseType 
+					name="Software"
+				/>
+			</jaxb:property>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='training_set_availability']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.ParameterSetAvailability"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='training_set_availability']/xsd:complexType/xsd:attribute[@name='answer']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='training_set_data']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.ParameterSetData"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='training_set_data']/xsd:complexType/xsd:attribute[@name='cas']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='training_set_data']/xsd:complexType/xsd:attribute[@name='chemname']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='training_set_data']/xsd:complexType/xsd:attribute[@name='formula']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='training_set_data']/xsd:complexType/xsd:attribute[@name='inchi']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='training_set_data']/xsd:complexType/xsd:attribute[@name='mol']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='training_set_data']/xsd:complexType/xsd:attribute[@name='smiles']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='training_set_descriptors']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.ParameterSetDescriptors"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='training_set_descriptors']/xsd:complexType/xsd:attribute[@name='answer']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="CollectionAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='validation_dependent_var_availability']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.ParameterAvailability"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='validation_dependent_var_availability']/xsd:complexType/xsd:attribute[@name='answer']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="CollectionAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='validation_set_availability']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.ParameterSetAvailability"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='validation_set_availability']/xsd:complexType/xsd:attribute[@name='answer']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='validation_set_data']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.ParameterSetData"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='validation_set_data']/xsd:complexType/xsd:attribute[@name='cas']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='validation_set_data']/xsd:complexType/xsd:attribute[@name='chemname']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='validation_set_data']/xsd:complexType/xsd:attribute[@name='formula']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='validation_set_data']/xsd:complexType/xsd:attribute[@name='inchi']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='validation_set_data']/xsd:complexType/xsd:attribute[@name='mol']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='validation_set_data']/xsd:complexType/xsd:attribute[@name='smiles']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="YesNoAnswer"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='validation_set_descriptors']/xsd:complexType">
+			<java:superClass
+				name="it.jrc.ecb.qmrf.ParameterSetDescriptors"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='validation_set_descriptors']/xsd:complexType/xsd:attribute[@name='answer']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				ref="CollectionAnswer"
+			/>
+		</jaxb:bindings>
+	</jaxb:bindings>
+</jaxb:bindings>
