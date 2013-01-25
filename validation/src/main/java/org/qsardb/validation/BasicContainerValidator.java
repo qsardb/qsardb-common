@@ -25,7 +25,7 @@ public class BasicContainerValidator extends ContainerValidator {
 		Container<?, ?> container = (Container<?, ?>)getEntity();
 
 		String id = container.getId();
-		if(!QdbUtil.validateId(id)){
+		if(!IdUtil.validate(id)){
 			error("Invalid Id \'" + id + "\'");
 		}
 	}

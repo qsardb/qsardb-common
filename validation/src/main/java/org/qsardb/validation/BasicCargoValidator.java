@@ -35,7 +35,7 @@ public class BasicCargoValidator extends CargoValidator {
 		Cargo<?> cargo = (Cargo<?>)getEntity();
 
 		String id = cargo.getId();
-		if(!QdbUtil.validateId(id)){
+		if(!IdUtil.validate(id)){
 			error("Invalid Id \'" + id + "\'");
 		}
 	}
