@@ -19,6 +19,8 @@ public class TableSetup {
 
 	private Map<String, List<Mapping>> columnMappings = new LinkedHashMap<String, List<Mapping>>();
 
+	private RowFilter rowFilter = new RowFilter();
+
 
 	public void reset(){
 		this.offset = -1;
@@ -126,6 +128,14 @@ public class TableSetup {
 				this.columnMappings.remove(id);
 			}
 		}
+	}
+
+	public RowFilter getRowFilter() {
+		return this.rowFilter;
+	}
+
+	public void setRowFilter(String expression) {
+		this.rowFilter = new RowFilter(expression);
 	}
 
 	static

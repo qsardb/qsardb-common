@@ -12,6 +12,8 @@ public class Table2Qdb {
 
 	static
 	public void convert(Qdb qdb, Table table, TableSetup setup) throws Exception {
+		RowFilter rowFilter = setup.getRowFilter();
+
 		Collection<Mapping> mappings = new LinkedHashSet<Mapping>();
 
 		Column idColumn = null;
@@ -74,6 +76,10 @@ public class Table2Qdb {
 				} // End if
 
 				if(setup.isIgnored(rowId)){
+					continue;
+				}
+
+				if(!rowFilter.include(row)) {
 					continue;
 				}
 
