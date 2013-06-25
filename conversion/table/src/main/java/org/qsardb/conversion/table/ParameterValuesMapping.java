@@ -50,7 +50,7 @@ public class ParameterValuesMapping<R extends ContainerRegistry<R, C>, C extends
 	public void mapValue(Compound compound, String string){
 		string = filter(string);
 
-		if(string == null){
+		if(string == null || string.trim().length() == 0){
 			return;
 		}
 
