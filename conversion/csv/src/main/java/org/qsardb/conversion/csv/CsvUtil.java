@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.commons.csv.*;
-import org.apache.commons.csv.CSVFormat.CSVFormatBuilder;
+import org.apache.commons.csv.CSVFormat;
 
 public class CsvUtil {
 
@@ -22,9 +22,7 @@ public class CsvUtil {
 		for(char delimiter : delimiters){
 
 			for(char encapsulator : encapsulators){
-				CSVFormatBuilder builder = (CSVFormat.newBuilder(delimiter)).withQuoteChar(encapsulator);
-
-				CSVFormat format = builder.build();
+				CSVFormat format = CSVFormat.newFormat(delimiter).withQuoteChar(encapsulator);
 
 				if(checkFormat(file, format)){
 					return format;
