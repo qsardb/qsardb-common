@@ -29,7 +29,7 @@ public class RegressionUtil {
 	static
 	public RegressionModelManager parse(Qdb qdb, Equation equation){
 		RegressionModelManager modelManager = new RegressionModelManager();
-		modelManager.createRegressionModel();
+		modelManager.createModel(MiningFunctionType.REGRESSION);
 
 		Property property = qdb.getProperty(equation.getIdentifier());
 		if(property == null){
@@ -39,12 +39,15 @@ public class RegressionUtil {
 		FieldName propertyField = FieldNameUtil.addPropertyField(modelManager, property);
 		modelManager.setTarget(propertyField);
 
+		RegressionTable regressionTable = new RegressionTable(Double.NaN);
+		modelManager.getRegressionTables().add(regressionTable);
+
 		List<Equation.Term> terms = equation.getTerms();
 		for(Equation.Term term : terms){
 			Double coefficient = Double.valueOf(term.getCoefficient());
 
 			if(term.isIntercept()){
-				modelManager.setIntercept(coefficient);
+				regressionTable.setIntercept(coefficient);
 			} else
 
 			{
@@ -54,7 +57,7 @@ public class RegressionUtil {
 				}
 
 				FieldName descriptorField = FieldNameUtil.addDescriptorField(modelManager, descriptor);
-				modelManager.addNumericPredictor(descriptorField, coefficient);
+				RegressionModelManager.addNumericPredictor(regressionTable, descriptorField, coefficient);
 			}
 		}
 
@@ -75,8 +78,8 @@ public class RegressionUtil {
 		equation.setIdentifier(property.getId());
 
 		List<Equation.Term> terms = new ArrayList<Equation.Term>();
-
-		List<NumericPredictor> numericPredictors = modelManager.getNumericPrecictors();
+		RegressionTable regressionTable = modelManager.getRegressionTables().get(0);
+		List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
 		for(NumericPredictor numericPredictor : numericPredictors){
 			Equation.Term term = new Equation.Term();
 
@@ -98,7 +101,7 @@ public class RegressionUtil {
 		{
 			Equation.Term term = new Equation.Term();
 
-			Double intercept = modelManager.getIntercept();
+			Double intercept = regressionTable.getIntercept();
 			term.setCoefficient(intercept.toString());
 
 			terms.add(term);

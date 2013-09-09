@@ -91,7 +91,7 @@ public class PMMLEvaluator extends Evaluator {
 
 			Object value = values.get(descriptor);
 			if(value != null){
-				value = ParameterUtil.parse(dataField, String.valueOf(value));
+				value = TypeUtil.parse(dataField.getDataType(), String.valueOf(value));
 			}
 
 			parameters.put(field, value);

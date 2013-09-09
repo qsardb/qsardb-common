@@ -15,6 +15,8 @@ import org.qsardb.model.*;
 import org.jpmml.manager.*;
 
 import org.apache.commons.vfs.*;
+import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.RegressionTable;
 
 public class Codessa2Qdb {
 
@@ -197,7 +199,7 @@ public class Codessa2Qdb {
 				}
 
 				RegressionModelManager pmmlManager = new RegressionModelManager();
-				pmmlManager.createRegressionModel();
+				pmmlManager.createModel(MiningFunctionType.REGRESSION);
 
 				org.dmg.pmml.FieldName propertyField = FieldNameUtil.addPropertyField(pmmlManager, property);
 				pmmlManager.setTarget(propertyField);
@@ -213,6 +215,9 @@ public class Codessa2Qdb {
 				reader.readLine();
 				reader.readLine();
 
+				RegressionTable regressionTable = new RegressionTable(Double.NaN);
+				pmmlManager.getRegressionTables().add(regressionTable);
+
 				// Intercept
 				{
 					line = reader.readLine();
@@ -221,8 +226,8 @@ public class Codessa2Qdb {
 					line = reader.readLine();
 					matchLine(matcher, line);
 
-					Double intercept = Double.valueOf(matcher.group(2));
-					pmmlManager.setIntercept(intercept);
+					double intercept = Double.parseDouble(matcher.group(2));
+					regressionTable.setIntercept(intercept);
 				}
 
 				int descriptorCount = (index + 1);
@@ -238,7 +243,7 @@ public class Codessa2Qdb {
 					Double coefficient = Double.valueOf(matcher.group(2));
 
 					org.dmg.pmml.FieldName descriptorField = FieldNameUtil.addDescriptorField(pmmlManager, descriptor);
-					pmmlManager.addNumericPredictor(descriptorField, coefficient);
+					RegressionModelManager.addNumericPredictor(regressionTable, descriptorField, coefficient);
 				}
 
 				Model model = new Model(String.valueOf(index++), property);
