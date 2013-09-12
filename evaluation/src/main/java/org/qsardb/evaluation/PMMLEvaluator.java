@@ -61,9 +61,10 @@ public class PMMLEvaluator extends Evaluator {
 
 	@Override
 	public Result evaluate(Map<Descriptor, ?> values) throws Exception {
-		ModelManager<?> modelManager = getModelManager();
+		org.jpmml.evaluator.Evaluator evaluator = 
+			(org.jpmml.evaluator.Evaluator) getModelManager();
 
-		Map<FieldName, Object> parameters = new LinkedHashMap<FieldName, Object>();
+		Map<FieldName, org.jpmml.evaluator.FieldValue> parameters = new LinkedHashMap<FieldName, org.jpmml.evaluator.FieldValue>();
 
 		Map<FieldName, DataField> dataFieldMap = new LinkedHashMap<FieldName, DataField>();
 
@@ -90,16 +91,13 @@ public class PMMLEvaluator extends Evaluator {
 			}
 
 			Object value = values.get(descriptor);
-			if(value != null){
-				value = TypeUtil.parse(dataField.getDataType(), String.valueOf(value));
-			}
-
-			parameters.put(field, value);
+			org.jpmml.evaluator.FieldValue fieldValue = EvaluatorUtil.prepare(evaluator, field, value);
+			parameters.put(field, fieldValue);
 		}
 
-		Object value = ((org.jpmml.evaluator.Evaluator)modelManager).evaluate(parameters);
-
-		return new Result(value, values);
+		Map<FieldName, ?> resultMap = evaluator.evaluate(parameters);
+		Object resultValue = resultMap.get(evaluator.getTargetField());
+		return new Result(resultValue, values);
 	}
 
 	@Override
