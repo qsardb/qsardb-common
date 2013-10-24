@@ -20,6 +20,8 @@ public class EquationParserTest {
 
 		this.parser.parseEquation("x = 1.0(0.00)y + 0.0(0.00)");
 		this.parser.parseEquation("x = 1.0(\u00b10.00)*(y) + 0.0(\u00b10.00)");
+
+		this.parser.parseEquation("x_exp = 1y + 0");
 	}
 
 	@Before

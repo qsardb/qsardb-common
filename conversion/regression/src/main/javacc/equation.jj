@@ -40,11 +40,13 @@ TOKEN :
 <DEFAULT>
 TOKEN :
 {
-	< IDENTIFIER : <LETTER> ( <LETTER> | <DIGIT> )* >
+	< IDENTIFIER : <LETTER> ( <LETTER> | <DIGIT> | <UNDERSCORE> )* >
 	|
 	< #DIGIT : [ "0"-"9" ] >
 	|
 	< #LETTER : [ "a"-"z", "A"-"Z" ] >
+	|
+	< #UNDERSCORE : "_" >
 }
 
 <DEFAULT>
