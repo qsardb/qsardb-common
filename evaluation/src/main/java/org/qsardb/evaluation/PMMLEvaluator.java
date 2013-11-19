@@ -61,10 +61,10 @@ public class PMMLEvaluator extends Evaluator {
 
 	@Override
 	public Result evaluate(Map<Descriptor, ?> values) throws Exception {
-		org.jpmml.evaluator.Evaluator evaluator = 
+		org.jpmml.evaluator.Evaluator evaluator =
 			(org.jpmml.evaluator.Evaluator) getModelManager();
 
-		Map<FieldName, org.jpmml.evaluator.FieldValue> parameters = new LinkedHashMap<FieldName, org.jpmml.evaluator.FieldValue>();
+		Map<FieldName, org.jpmml.evaluator.FieldValue> arguments = new LinkedHashMap<FieldName, org.jpmml.evaluator.FieldValue>();
 
 		Map<FieldName, DataField> dataFieldMap = new LinkedHashMap<FieldName, DataField>();
 
@@ -74,13 +74,13 @@ public class PMMLEvaluator extends Evaluator {
 
 			DataField dataField = dataFieldMap.get(field);
 			if(dataField == null){
-				dataField = modelManager.getDataField(field);
+				dataField = evaluator.getDataField(field);
 
 				// For compatibility with generic PMML producer software
 				if(dataField == null){
 					field = new FieldName(descriptor.getId());
 
-					dataField = modelManager.getDataField(field);
+					dataField = evaluator.getDataField(field);
 				} // End if
 
 				if(dataField == null){
@@ -92,12 +92,13 @@ public class PMMLEvaluator extends Evaluator {
 
 			Object value = values.get(descriptor);
 			org.jpmml.evaluator.FieldValue fieldValue = EvaluatorUtil.prepare(evaluator, field, value);
-			parameters.put(field, fieldValue);
+			arguments.put(field, fieldValue);
 		}
 
-		Map<FieldName, ?> resultMap = evaluator.evaluate(parameters);
-		Object resultValue = resultMap.get(evaluator.getTargetField());
-		return new Result(resultValue, values);
+		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+
+		Object targetValue = result.get(evaluator.getTargetField());
+		return new Result(EvaluatorUtil.decode(targetValue), values);
 	}
 
 	@Override
@@ -117,7 +118,7 @@ public class PMMLEvaluator extends Evaluator {
 			// if the ANN model has only one output parameter, then extract its value from the map
 			Map map = (Map)result.getValue();
 			if(map.size() == 1){
-				Object value = map.values().toArray()[0];
+				Object value = map.values().iterator().next();
 				result = new Result(value, result.getParameters());
 			}
 
