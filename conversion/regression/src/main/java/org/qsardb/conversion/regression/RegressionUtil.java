@@ -68,7 +68,7 @@ public class RegressionUtil {
 	public Equation format(Qdb qdb, RegressionModelManager modelManager){
 		Equation equation = new Equation();
 
-		FieldName propertyName = modelManager.getTarget();
+		FieldName propertyName = modelManager.getMiningFields(FieldUsageType.PREDICTED).get(0);
 
 		Property property = FieldNameUtil.decodeProperty(qdb, propertyName);
 		if(property == null){
