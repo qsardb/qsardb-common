@@ -47,13 +47,8 @@ class CompoundIterator implements Iterator<Row>, Closeable {
 		Map<Column, Cell> values = new LinkedHashMap<Column, Cell>();
 
 		try {
-			String molfile = readMolfile();
-			values.put(new Column(SDFile.COLUMN_MOLFILE), new Cell(molfile));
-
-			Map<String, String> data = readData();
-			for(Map.Entry<String, String> entry : data.entrySet()){
-				values.put(new Column(entry.getKey()), new Cell(entry.getValue()));
-			}
+			values.putAll(readMolfile());
+			values.putAll(readData());
 		} catch(EOFException eofe){
 			return null;
 		} catch(IOException ioe){
@@ -63,7 +58,9 @@ class CompoundIterator implements Iterator<Row>, Closeable {
 		return new Row(String.valueOf(this.index++), values);
 	}
 
-	private String readMolfile() throws IOException {
+	private Map<Column, Cell> readMolfile() throws IOException {
+		Map<Column, Cell> values = new LinkedHashMap<Column, Cell>();
+
 		LineNumberReader reader = ensureOpen();
 
 		StringBuilder sb = new StringBuilder();
@@ -100,13 +97,17 @@ class CompoundIterator implements Iterator<Row>, Closeable {
 			}
 		}
 
-		return sb.toString();
+		String molfile = sb.toString();
+		values.put(new Column(SDFile.COLUMN_MOLFILE_TITLE), new Cell(first));
+		values.put(new Column(SDFile.COLUMN_MOLFILE), new Cell(molfile));
+
+		return values;
 	}
 
-	private Map<String, String> readData() throws IOException {
+	private Map<Column, Cell> readData() throws IOException {
 		LineNumberReader reader = ensureOpen();
 
-		Map<String, String> values = new LinkedHashMap<String, String>();
+		Map<Column, Cell> values = new LinkedHashMap<Column, Cell>();
 
 		fields:
 		for(int i = 0; true; i++){
@@ -149,7 +150,7 @@ class CompoundIterator implements Iterator<Row>, Closeable {
 					sb.append(line);
 				}
 
-				values.put(name, sb.toString());
+				values.put(new Column(name), new Cell(sb.toString()));
 			} else
 
 			if(line.equals("$$$$")){

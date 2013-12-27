@@ -44,4 +44,5 @@ public class SDFile extends Table {
 	}
 
 	public static final String COLUMN_MOLFILE = "molfile";
+	public static final String COLUMN_MOLFILE_TITLE = "molfile_title";
 }
