@@ -37,7 +37,7 @@ public class UCUMValidator extends CargoValidator<UCUMCargo> {
 		try {
 			unit = cargo.loadUnit();
 		} catch(QdbException qe){
-			error("Failed to parse UCUM", qe);
+			error("Failed to parse UCUM: " + cargo.loadString(), qe);
 
 			return;
 		}
