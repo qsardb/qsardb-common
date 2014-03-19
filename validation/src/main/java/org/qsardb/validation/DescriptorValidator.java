@@ -26,6 +26,7 @@ public class DescriptorValidator extends ContainerValidator<Descriptor> {
 
 		if((Scope.LOCAL).equals(scope)){
 			validateValuesCargo();
+			validateName();
 		} else
 
 		if((Scope.GLOBAL).equals(scope)){
@@ -59,4 +60,13 @@ public class DescriptorValidator extends ContainerValidator<Descriptor> {
 			warning("Missing BODO Cargo");
 		}
 	}
+
+	private void validateName() {
+		Descriptor descriptor = getEntity();
+
+		if (descriptor.getName().equalsIgnoreCase(descriptor.getId())) {
+			warning("Same descriptor ID and name");
+		}
+	}
+
 }
