@@ -10,7 +10,7 @@
 
 	<groupId>org.qsardb</groupId>
 	<artifactId>qsardb-common</artifactId>
-	<version>1.0.0</version>
+	<version>1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<organization>
@@ -47,7 +47,7 @@
 		<connection>scm:git:git://github.com/qsardb/qsardb-common.git</connection>
 		<developerConnection>scm:git:git://github.com/qsardb/qsardb-common.git</developerConnection>
 		<url>https://github.com/qsardb/qsardb-common.git</url>
-		<tag>1.0.0</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<issueManagement>
 		<system>GitHub</system>

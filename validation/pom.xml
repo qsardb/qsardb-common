@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>org.qsardb</groupId>
 		<artifactId>qsardb-common</artifactId>
-		<version>1.0.0</version>
+		<version>1.1-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.qsardb</groupId>
 	<artifactId>validation</artifactId>
-	<version>1.0.0</version>
+	<version>1.1-SNAPSHOT</version>
 
 	<dependencies>
 		<dependency>
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>org.qsardb</groupId>
 			<artifactId>evaluation</artifactId>
-			<version>1.0.0</version>
+			<version>1.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
