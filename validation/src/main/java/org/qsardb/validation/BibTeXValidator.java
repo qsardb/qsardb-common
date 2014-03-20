@@ -54,7 +54,7 @@ public class BibTeXValidator extends CargoValidator<BibTeXCargo> {
 			try {
 				parseLaTeX(latex);
 			} catch(Exception e){
-				warning("Failed to parse LaTeX", e);
+				warning("Failed to parse LaTeX input: " + latex, e);
 			}
 		}
 
@@ -100,6 +100,8 @@ public class BibTeXValidator extends CargoValidator<BibTeXCargo> {
 			LaTeXParser parser = new LaTeXParser();
 
 			return parser.parse(reader);
+		} catch (TokenMgrError e) {
+			throw new ParseException(e.getMessage());
 		} finally {
 			reader.close();
 		}
