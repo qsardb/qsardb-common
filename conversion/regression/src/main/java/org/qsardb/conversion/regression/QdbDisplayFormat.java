@@ -17,7 +17,7 @@ public class QdbDisplayFormat implements DisplayFormat {
 	public String formatLeftHandSide(String identifier){
 		Property property = getQdb().getProperty(identifier);
 		if(property != null){
-			return property.getName();
+			return property.getId();
 		}
 
 		return null;
@@ -26,7 +26,7 @@ public class QdbDisplayFormat implements DisplayFormat {
 	public String formatRightHandSide(String identifier){
 		Descriptor descriptor = getQdb().getDescriptor(identifier);
 		if(descriptor != null){
-			return descriptor.getName();
+			return descriptor.getId();
 		}
 
 		return null;
