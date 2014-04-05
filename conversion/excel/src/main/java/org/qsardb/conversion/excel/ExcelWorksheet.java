@@ -72,7 +72,14 @@ public class ExcelWorksheet extends Worksheet {
 			case Cell.CELL_TYPE_STRING:
 				return String.valueOf(cell.getStringCellValue());
 			case Cell.CELL_TYPE_NUMERIC:
-				return String.valueOf(cell.getNumericCellValue());
+				double doubleVal = cell.getNumericCellValue();
+				int intVal = (int)doubleVal;
+
+				if (intVal == doubleVal) {
+					return String.valueOf(intVal);
+				} else {
+					return String.valueOf(doubleVal);
+				}
 			case Cell.CELL_TYPE_BOOLEAN:
 				return String.valueOf(cell.getBooleanCellValue());
 			default:
