@@ -8,11 +8,9 @@ import java.net.*;
 import java.util.*;
 
 import org.apache.http.*;
-import org.apache.http.client.*;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
-import org.apache.http.conn.*;
 import org.apache.http.impl.client.*;
-import org.apache.http.params.*;
 import org.apache.http.util.*;
 
 public class Service {
@@ -70,11 +68,11 @@ public class Service {
 
 		URL url = new URL("http://cactus.nci.nih.gov/chemical/structure/" + encodedStructure.replace("+", "%20") + "/" + representation);
 
-		HttpParams parameters = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(parameters, 10 * 1000);
-		HttpConnectionParams.setSoTimeout(parameters, 2 * 1000);
-
-		HttpClient client = new DefaultHttpClient(parameters);
+		RequestConfig config = RequestConfig.custom()
+				.setConnectTimeout(10*1000)
+				.setSocketTimeout(2*1000).build();
+		CloseableHttpClient client = HttpClients.custom()
+				.setDefaultRequestConfig(config).build();
 
 		try {
 			HttpGet request = new HttpGet(url.toURI());
@@ -115,11 +113,7 @@ public class Service {
 		} catch(URISyntaxException use){
 			throw new IOException(use);
 		} finally {
-			ClientConnectionManager connectionManager = client.getConnectionManager();
-
-			if(connectionManager != null){
-				connectionManager.shutdown();
-			}
+			client.close();
 		}
 	}
 
