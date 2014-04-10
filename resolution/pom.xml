@@ -15,6 +15,7 @@
 	<modules>
 		<module>chemical</module>
 		<module>parscit</module>
+		<module>doi</module>
 	</modules>
 
 	<dependencyManagement>
