@@ -21,7 +21,7 @@ public class EquationFormatter {
 	}
 
 	public String formatRightHandSide(List<Equation.Term> terms, DisplayFormat format){
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		for(Equation.Term term : terms){
 			String coefficientSign = "+";
@@ -62,6 +62,11 @@ public class EquationFormatter {
 				}
 
 				sb.append('*').append(' ').append(identifier);
+
+				String exponent = term.getExponent();
+				if (!exponent.equals("1")) {
+					sb.append('^').append(exponent);
+				}
 			}
 		}
 

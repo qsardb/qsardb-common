@@ -43,6 +43,8 @@ public class Equation {
 
 		private String identifier = null;
 
+		private String exponent = null;
+
 
 		public Term(){
 		}
@@ -73,6 +75,14 @@ public class Equation {
 
 		public void setIdentifier(String identifier){
 			this.identifier = identifier;
+		}
+
+		public String getExponent() {
+			return this.exponent;
+		}
+
+		public void setExponent(String exponent) {
+			this.exponent = exponent;
 		}
 	}
 }

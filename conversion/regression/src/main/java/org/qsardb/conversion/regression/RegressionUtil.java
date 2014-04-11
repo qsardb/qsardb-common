@@ -83,8 +83,12 @@ public class RegressionUtil {
 		for(NumericPredictor numericPredictor : numericPredictors){
 			Equation.Term term = new Equation.Term();
 
-			Double coefficient = Double.valueOf(numericPredictor.getCoefficient());
+			Double coefficient = numericPredictor.getCoefficient();
 			term.setCoefficient(coefficient.toString());
+
+			int exponent = numericPredictor.getExponent();
+			term.setExponent(Integer.toString(exponent));
+			System.out.println("SS: exponent = " + exponent);
 
 			FieldName descriptorName = numericPredictor.getName();
 

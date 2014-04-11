@@ -74,7 +74,7 @@ public class Evaluator {
 	}
 
 	protected String formatRegressionResult(Equation equation, final Result result, DecimalFormat format){
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		EquationFormatter formatter = new EquationFormatter();
 
