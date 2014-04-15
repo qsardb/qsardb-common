@@ -20,6 +20,14 @@ public class DOIResolver {
 		return out.toString();
 	}
 
+	public static BibTeXEntry asBibTeXEntry(String doi) throws IOException {
+		for (BibTeXEntry entry: resolveDOI(doi).getEntries().values()) {
+			return entry;
+		}
+
+		throw new IOException();
+	}
+
 	private static BibTeXDatabase resolveDOI(String doi) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
 
