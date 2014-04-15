@@ -55,7 +55,7 @@ public class ReferencesValidator extends MapValidator<ReferencesCargo> {
 		BibTeXCargo cargo = parameter.getCargo(BibTeXCargo.class);
 
 		try {
-			String bibtex = cargo.loadString("US-ASCII");
+			String bibtex = cargo.loadString();
 
 			return parseBibTeX(bibtex);
 		} catch(Exception e){

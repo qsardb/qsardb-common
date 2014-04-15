@@ -22,7 +22,7 @@ public class BibTeXValidator extends CargoValidator<BibTeXCargo> {
 	public void validate() throws IOException {
 		BibTeXCargo cargo = getEntity();
 
-		String bibtex = cargo.loadString("US-ASCII");
+		String bibtex = cargo.loadString();
 
 		BibTeXDatabase database;
 
@@ -51,10 +51,12 @@ public class BibTeXValidator extends CargoValidator<BibTeXCargo> {
 		for(Map.Entry<Key, Value> field : fields){
 			String latex = (field.getValue()).toUserString();
 
-			try {
-				parseLaTeX(latex);
-			} catch(Exception e){
-				warning("Failed to parse LaTeX input: " + latex, e);
+			if(latex.indexOf('\\') > -1 || latex.indexOf('{') > -1) {
+				try {
+					parseLaTeX(latex);
+				} catch(Exception e){
+					warning("Failed to parse LaTeX input: " + latex, e);
+				}
 			}
 		}
 
