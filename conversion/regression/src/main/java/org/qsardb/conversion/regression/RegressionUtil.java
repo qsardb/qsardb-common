@@ -88,7 +88,6 @@ public class RegressionUtil {
 
 			int exponent = numericPredictor.getExponent();
 			term.setExponent(Integer.toString(exponent));
-			System.out.println("SS: exponent = " + exponent);
 
 			FieldName descriptorName = numericPredictor.getName();
 
