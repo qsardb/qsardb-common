@@ -69,7 +69,7 @@ public class CsvUtil {
 				}
 			}
 
-			return (count > 2);
+			return (count > 1);
 		} finally {
 			reader.close();
 		}
