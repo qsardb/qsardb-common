@@ -22,7 +22,7 @@ public class CsvUtil {
 		for(char delimiter : delimiters){
 
 			for(char encapsulator : encapsulators){
-				CSVFormat format = CSVFormat.newFormat(delimiter).withQuoteChar(encapsulator);
+				CSVFormat format = CSVFormat.newFormat(delimiter).withQuote(encapsulator);
 
 				if(checkFormat(file, format)){
 					return format;

@@ -31,7 +31,7 @@ public class CsvUtilTest {
 		}
 
 		assertEquals(',', format.getDelimiter());
-		assertEquals('\"', (char)format.getQuoteChar());
+		assertEquals('\"', (char)format.getQuoteCharacter());
 	}
 
 	@Test
@@ -52,7 +52,7 @@ public class CsvUtilTest {
 		}
 
 		assertEquals(';', format.getDelimiter());
-		assertEquals('\"', (char)format.getQuoteChar());
+		assertEquals('\"', (char)format.getQuoteCharacter());
 	}
 
 	static

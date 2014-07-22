@@ -10,14 +10,17 @@ import org.apache.commons.csv.CSVPrinter;
 import org.qsardb.conversion.table.*;
 
 public class CsvExporter extends TableExporter {
-	private final CSVPrinter output;
+	private final OutputStream os;
+	private CSVPrinter output;
 
 	public CsvExporter(OutputStream os) {
-		output = new CSVPrinter(new OutputStreamWriter(os), CSVFormat.EXCEL);
+		this.os = os;
 	}
 
 	@Override
 	public void write() throws Exception {
+		output = new CSVPrinter(new OutputStreamWriter(os), CSVFormat.EXCEL);
+
 		ArrayList<String> header = new ArrayList<String>();
 		for (Iterator<Column> it=columns(); it.hasNext();) {
 			header.add(it.next().getId());
@@ -35,7 +38,9 @@ public class CsvExporter extends TableExporter {
 
 	@Override
 	public void close() throws IOException {
-		output.close();
+		if (output != null) {
+			output.close();
+		}
 	}
 
 }
