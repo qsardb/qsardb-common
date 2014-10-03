@@ -45,6 +45,8 @@ public class Equation {
 
 		private String exponent = null;
 
+		private boolean normalized = false;
+
 
 		public Term(){
 		}
@@ -83,6 +85,14 @@ public class Equation {
 
 		public void setExponent(String exponent) {
 			this.exponent = exponent;
+		}
+
+		public boolean isNormalized() {
+			return this.normalized;
+		}
+
+		void setNormalized(boolean isNormalized) {
+			this.normalized = isNormalized;
 		}
 	}
 }

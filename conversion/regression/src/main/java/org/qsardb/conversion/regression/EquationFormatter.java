@@ -61,7 +61,12 @@ public class EquationFormatter {
 					identifier = format.formatRightHandSide(identifier);
 				}
 
-				sb.append('*').append(' ').append(identifier);
+				sb.append('*').append(' ');
+				if (term.isNormalized()) {
+					sb.append("norm(").append(identifier).append(")");
+				} else {
+					sb.append(identifier);
+				}
 
 				String exponent = term.getExponent();
 				if (!exponent.equals("1")) {

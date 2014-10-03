@@ -90,8 +90,17 @@ public class RegressionUtil {
 			term.setExponent(Integer.toString(exponent));
 
 			FieldName descriptorName = numericPredictor.getName();
+			FieldName normDescName = resolveDerivedField(modelManager, descriptorName);
 
-			Descriptor descriptor = FieldNameUtil.decodeDescriptor(qdb, descriptorName);
+			Descriptor descriptor;
+
+			if (normDescName == null) {
+				descriptor = FieldNameUtil.decodeDescriptor(qdb, descriptorName);
+			} else {
+				descriptor = FieldNameUtil.decodeDescriptor(qdb, normDescName);
+				term.setNormalized(true);
+			}
+
 			if(descriptor == null){
 				throw new IllegalArgumentException("Descriptor \'" + descriptorName.getValue() + "\' not found");
 			}
@@ -113,5 +122,19 @@ public class RegressionUtil {
 		equation.setTerms(terms);
 
 		return equation;
+	}
+
+	private static FieldName resolveDerivedField(RegressionModelManager manager, FieldName descriptorName) {
+		LocalTransformations tr = manager.getModel().getLocalTransformations();
+		if (tr != null) {
+			for (DerivedField df: tr.getDerivedFields()) {
+				if (descriptorName.equals(df.getName())
+						&& df.getExpression() instanceof NormContinuous) {
+					NormContinuous nc = (NormContinuous) df.getExpression();
+					return nc.getField();
+				}
+			}
+		}
+		return null;
 	}
 }
