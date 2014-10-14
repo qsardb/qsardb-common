@@ -12,11 +12,8 @@ import org.qsardb.cargo.map.*;
 import org.qsardb.cargo.pmml.*;
 import org.qsardb.model.*;
 
-import org.jpmml.manager.*;
-
 import org.apache.commons.vfs.*;
-import org.dmg.pmml.MiningFunctionType;
-import org.dmg.pmml.RegressionTable;
+import org.qsardb.conversion.regression.*;
 
 public class Codessa2Qdb {
 
@@ -198,12 +195,6 @@ public class Codessa2Qdb {
 					break;
 				}
 
-				RegressionModelManager pmmlManager = new RegressionModelManager();
-				pmmlManager.createModel(MiningFunctionType.REGRESSION);
-
-				org.dmg.pmml.FieldName propertyField = FieldNameUtil.addPropertyField(pmmlManager, property);
-				pmmlManager.setTarget(propertyField);
-
 				reader.readLine();
 				reader.readLine();
 				reader.readLine();
@@ -215,8 +206,9 @@ public class Codessa2Qdb {
 				reader.readLine();
 				reader.readLine();
 
-				RegressionTable regressionTable = new RegressionTable(Double.NaN);
-				pmmlManager.getRegressionTables().add(regressionTable);
+				Equation eq = new Equation();
+				eq.setIdentifier(property.getId());
+				eq.setTerms(new ArrayList<Equation.Term>());
 
 				// Intercept
 				{
@@ -226,8 +218,9 @@ public class Codessa2Qdb {
 					line = reader.readLine();
 					matchLine(matcher, line);
 
-					double intercept = Double.parseDouble(matcher.group(2));
-					regressionTable.setIntercept(intercept);
+					Equation.Term intercept = new Equation.Term();
+					intercept.setCoefficient(matcher.group(2));
+					eq.getTerms().add(intercept);
 				}
 
 				int descriptorCount = (index + 1);
@@ -240,10 +233,10 @@ public class Codessa2Qdb {
 					line = reader.readLine();
 					matchLine(matcher, line);
 
-					Double coefficient = Double.valueOf(matcher.group(2));
-
-					org.dmg.pmml.FieldName descriptorField = FieldNameUtil.addDescriptorField(pmmlManager, descriptor);
-					RegressionModelManager.addNumericPredictor(regressionTable, descriptorField, coefficient);
+					Equation.Term term = new Equation.Term();
+					term.setIdentifier(descriptor.getId());
+					term.setCoefficient(matcher.group(2));
+					eq.getTerms().add(term);
 				}
 
 				Model model = new Model(String.valueOf(index++), property);
@@ -252,7 +245,7 @@ public class Codessa2Qdb {
 				models.add(model);
 
 				PMMLCargo pmmlCargo = model.addCargo(PMMLCargo.class);
-				pmmlCargo.storePmml(pmmlManager.getPmml());
+				pmmlCargo.storePmml(RegressionUtil.parse(qdb, eq));
 
 				logger.log(Level.FINE, model.toString());
 			}

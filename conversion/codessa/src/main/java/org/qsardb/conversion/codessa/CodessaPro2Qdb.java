@@ -13,12 +13,12 @@ import org.qsardb.cargo.pmml.*;
 import org.qsardb.cargo.structure.*;
 import org.qsardb.model.*;
 
-import org.jpmml.manager.*;
-
 import org.apache.commons.io.*;
 import org.apache.commons.vfs.*;
 import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.RegressionTable;
+import org.qsardb.conversion.regression.Equation;
+import org.qsardb.conversion.regression.RegressionUtil;
 
 public class CodessaPro2Qdb {
 
@@ -307,28 +307,24 @@ public class CodessaPro2Qdb {
 			reader.readLine();
 			String type = reader.readLine();
 
-			RegressionModelManager pmmlManager = new RegressionModelManager();
-			pmmlManager.createModel(MiningFunctionType.REGRESSION);
-
 			Property property = properties.get(token(reader.readLine()));
-
-			org.dmg.pmml.FieldName propertyField = FieldNameUtil.addPropertyField(pmmlManager, property);
-			pmmlManager.setTarget(propertyField);
 
 			String statistics = reader.readLine();
 			String fCrit = reader.readLine();
 			String stdDev = reader.readLine();
 
-			RegressionTable regressionTable = new RegressionTable(Double.NaN);
-			pmmlManager.getRegressionTables().add(regressionTable);
+			Equation eq = new Equation();
+			eq.setIdentifier(property.getId());
+			eq.setTerms(new ArrayList<Equation.Term>());
 
 			// Intercept
 			{
 				String line = reader.readLine();
 				matchLine(interceptMatcher, token(line));
 
-				double intercept = Double.parseDouble(interceptMatcher.group(1));
-				regressionTable.setIntercept(intercept);
+				Equation.Term intercept = new Equation.Term();
+				intercept.setCoefficient(interceptMatcher.group(1));
+				eq.getTerms().add(intercept);
 			}
 
 			int descriptorCount = Integer.parseInt(token(reader.readLine()));
@@ -338,12 +334,12 @@ public class CodessaPro2Qdb {
 
 				String descId = descriptorMatcher.group(1);
 				descId = prepareDescriptorId(descId);
+				String coefficient = descriptorMatcher.group(2);
 
-				Descriptor descriptor = descriptors.get(descId);
-				Double coefficient = Double.valueOf(descriptorMatcher.group(2));
-
-				org.dmg.pmml.FieldName descriptorField = FieldNameUtil.addDescriptorField(pmmlManager, descriptor);
-				RegressionModelManager.addNumericPredictor(regressionTable, descriptorField, coefficient);
+				Equation.Term term = new Equation.Term();
+				term.setIdentifier(descId);
+				term.setCoefficient(coefficient);
+				eq.getTerms().add(term);
 			}
 
 			Model model = new Model(id, property);
@@ -358,7 +354,7 @@ public class CodessaPro2Qdb {
 			Map<String, Double> values = readMap(reader, compounds);
 
 			PMMLCargo pmmlCargo = model.addCargo(PMMLCargo.class);
-			pmmlCargo.storePmml(pmmlManager.getPmml());
+			pmmlCargo.storePmml(RegressionUtil.parse(qdb, eq));
 
 			Prediction prediction = new Prediction(model.getId() + "-training", model, Prediction.Type.TRAINING);
 			prediction.setName(property.getName());

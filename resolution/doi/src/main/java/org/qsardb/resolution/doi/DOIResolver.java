@@ -57,13 +57,10 @@ public class DOIResolver {
 
 	private static BibTeXDatabase parseResponse(CloseableHttpResponse response) throws IOException {
 		InputStream is = response.getEntity().getContent();
-		BibTeXParser parser = new BibTeXParser();
 
-		BibTeXDatabase db;
 		try {
+			BibTeXParser parser = new BibTeXParser();
 			return parser.parse(new InputStreamReader(is, "UTF-8"));
-		} catch (TokenMgrError ex) {
-			throw new IOException(ex.getMessage());
 		} catch (ParseException ex) {
 			throw new IOException(ex.getMessage());
 		}

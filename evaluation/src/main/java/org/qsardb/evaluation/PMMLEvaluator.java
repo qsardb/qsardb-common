@@ -105,14 +105,15 @@ public class PMMLEvaluator extends Evaluator {
 	public Object evaluateAndFormat(Map<Descriptor, ?> values, DecimalFormat format) throws Exception {
 		ModelManager<?> modelManager = getModelManager();
 
-		if(modelManager instanceof RegressionModelManager){
-			Equation equation = RegressionUtil.format(getQdb(), (RegressionModelManager)modelManager);
+		if(modelManager instanceof RegressionModelEvaluator){
+			RegressionModelEvaluator evaluator = (RegressionModelEvaluator)modelManager;
+			Equation equation = RegressionUtil.format(getQdb(), evaluator.getModel());
 
 			Result result = evaluate(values);
 
 			return super.formatRegressionResult(equation, result, format);
 		}
-		else if(modelManager instanceof NeuralNetworkManager){
+		else if(modelManager instanceof NeuralNetworkEvaluator){
 			Result result = evaluate(values);
 
 			// if the ANN model has only one output parameter, then extract its value from the map

@@ -42,7 +42,7 @@ public class PMMLValidator extends CargoValidator<PMMLCargo> {
 	}
 
 	private void validatePmml(PMML pmml){
-		List<Model> models = pmml.getContent();
+		List<Model> models = pmml.getModels();
 
 		if(models.size() < 1){
 			error("Missing Model element");

@@ -102,8 +102,6 @@ public class BibTeXValidator extends CargoValidator<BibTeXCargo> {
 			LaTeXParser parser = new LaTeXParser();
 
 			return parser.parse(reader);
-		} catch (TokenMgrError e) {
-			throw new ParseException(e.getMessage());
 		} finally {
 			reader.close();
 		}
