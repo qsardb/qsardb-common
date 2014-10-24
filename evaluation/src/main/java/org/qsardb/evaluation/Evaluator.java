@@ -205,6 +205,9 @@ public class Evaluator {
 
 		Collection<Map.Entry<String, String>> entries = values.entrySet();
 		for(Map.Entry<String, String> entry : entries){
+			if (entry.getValue() == null) {
+				continue;
+			}
 
 			try {
 				result.put(entry.getKey(), new BigDecimal(entry.getValue()));
