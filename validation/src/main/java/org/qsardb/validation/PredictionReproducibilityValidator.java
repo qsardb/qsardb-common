@@ -23,15 +23,6 @@ public class PredictionReproducibilityValidator extends ContainerValidator<Predi
 	}
 
 	@Override
-	protected boolean acceptContainer(Container container){
-		Prediction prediction = (Prediction)container;
-
-		Prediction.Type type = prediction.getType();
-
-		return (Prediction.Type.TRAINING).equals(type);
-	}
-
-	@Override
 	public void validate() throws IOException {
 		Prediction prediction = (Prediction)getEntity();
 
