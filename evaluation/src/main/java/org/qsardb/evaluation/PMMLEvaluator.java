@@ -117,10 +117,12 @@ public class PMMLEvaluator extends Evaluator {
 			Result result = evaluate(values);
 
 			// if the ANN model has only one output parameter, then extract its value from the map
-			Map map = (Map)result.getValue();
-			if(map.size() == 1){
-				Object value = map.values().iterator().next();
-				result = new Result(value, result.getParameters());
+			if (result.getValue() instanceof Map) {
+				Map map = (Map)result.getValue();
+				if(map.size() == 1){
+					Object value = map.values().iterator().next();
+					result = new Result(value, result.getParameters());
+				}
 			}
 
 			return super.formatResult(result, format);
