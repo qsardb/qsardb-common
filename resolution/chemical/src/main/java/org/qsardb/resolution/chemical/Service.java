@@ -64,9 +64,8 @@ public class Service {
 	 */
 	static
 	private String resolve(String structure, String representation) throws IOException {
-		String encodedStructure = URLEncoder.encode(structure, "UTF-8");
-
-		URL url = new URL("http://cactus.nci.nih.gov/chemical/structure/" + encodedStructure.replace("+", "%20") + "/" + representation);
+		String host = "cactus.nci.nih.gov";
+		String path = "/chemical/structure/" + structure + "/" + representation;
 
 		RequestConfig config = RequestConfig.custom()
 				.setConnectTimeout(10*1000)
@@ -75,7 +74,8 @@ public class Service {
 				.setDefaultRequestConfig(config).build();
 
 		try {
-			HttpGet request = new HttpGet(url.toURI());
+			URI uri = new URI("http", host, path, null);
+			HttpGet request = new HttpGet(uri);
 
 			HttpResponse response = client.execute(request);
 
