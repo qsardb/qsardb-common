@@ -37,15 +37,17 @@ public class Equation {
 	static
 	public class Term {
 
-		private String coefficient = null;
+		private String coefficient;
 
-		private String coefficientPrecision = null;
+		private String coefficientPrecision;
 
-		private String identifier = null;
+		private String identifier;
 
-		private String exponent = null;
+		private String exponent;
 
-		private boolean normalized = false;
+		private String function;
+
+		private List<Term> arguments;
 
 
 		public Term(){
@@ -87,12 +89,20 @@ public class Equation {
 			this.exponent = exponent;
 		}
 
-		public boolean isNormalized() {
-			return this.normalized;
+		public String getFunction() {
+			return this.function;
 		}
 
-		void setNormalized(boolean isNormalized) {
-			this.normalized = isNormalized;
+		public void setFunction(String function) {
+			this.function = function;
+		}
+
+		public List<Term> getArguments() {
+			return this.arguments;
+		}
+
+		public void setArguments(List<Term> crossTerms){
+			this.arguments = crossTerms;
 		}
 	}
 }
