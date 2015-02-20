@@ -40,6 +40,7 @@
 		<module>conversion</module>
 		<module>evaluation</module>
 		<module>resolution</module>
+		<module>statistics</module>
 		<module>validation</module>
 	</modules>
 
