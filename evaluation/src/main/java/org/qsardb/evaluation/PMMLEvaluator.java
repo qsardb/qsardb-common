@@ -106,12 +106,15 @@ public class PMMLEvaluator extends Evaluator {
 		ModelManager<?> modelManager = getModelManager();
 
 		if(modelManager instanceof RegressionModelEvaluator){
-			RegressionModelEvaluator evaluator = (RegressionModelEvaluator)modelManager;
-			Equation equation = RegressionUtil.format(getQdb(), evaluator.getModel());
-
 			Result result = evaluate(values);
 
-			return super.formatRegressionResult(equation, result, format);
+			try {
+				RegressionModelEvaluator evaluator = (RegressionModelEvaluator)modelManager;
+				Equation equation = RegressionUtil.format(getQdb(), evaluator.getPMML());
+				return super.formatRegressionResult(equation, result, format);
+			} catch (IllegalArgumentException ex) {
+				return super.formatResult(result, format);
+			}
 		}
 		else if(modelManager instanceof NeuralNetworkEvaluator){
 			Result result = evaluate(values);

@@ -6,8 +6,10 @@ package org.qsardb.conversion.regression;
 import java.util.*;
 import org.dmg.pmml.*;
 import org.qsardb.cargo.pmml.*;
-import org.qsardb.model.*;
+import org.qsardb.model.Descriptor;
 import org.qsardb.model.Parameter;
+import org.qsardb.model.Property;
+import org.qsardb.model.Qdb;
 
 public class RegressionUtil {
 
@@ -93,8 +95,10 @@ public class RegressionUtil {
 	}
 
 	static
-	public Equation format(Qdb qdb, RegressionModel model){
+	public Equation format(Qdb qdb, PMML pmml){
 		Equation equation = new Equation();
+
+		RegressionModel model = (RegressionModel) pmml.getModels().get(0);
 
 		FieldName propertyName = getPropertyName(model);
 
@@ -109,12 +113,12 @@ public class RegressionUtil {
 		RegressionTable regressionTable = model.getRegressionTables().get(0);
 		List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
 		for(NumericPredictor numericPredictor : numericPredictors){
-			Equation.Term term = formatNumericPredictor(qdb, model, numericPredictor);
+			Equation.Term term = formatNumericPredictor(qdb, pmml, model, numericPredictor);
 			terms.add(term);
 		}
 
 		for(PredictorTerm predictorTerm: regressionTable.getPredictorTerms()){
-			Equation.Term term = formatPredictorTerm(qdb, model, predictorTerm);
+			Equation.Term term = formatPredictorTerm(qdb, pmml, model, predictorTerm);
 			terms.add(term);
 		}
 
@@ -141,10 +145,10 @@ public class RegressionUtil {
 		throw new IllegalArgumentException("MiningSchema without predicted field");
 	}
 
-	private static Equation.Term formatNumericPredictor(Qdb qdb, RegressionModel model, NumericPredictor numericPredictor) {
+	private static Equation.Term formatNumericPredictor(Qdb qdb, PMML pmml, RegressionModel model, NumericPredictor numericPredictor) {
 		FieldName descriptorName = numericPredictor.getName();
 
-		Equation.Term term = RegressionUtil.createTerm(qdb, model, descriptorName);
+		Equation.Term term = RegressionUtil.createTerm(qdb, pmml, model, descriptorName);
 
 		Double coefficient = numericPredictor.getCoefficient();
 		term.setCoefficient(coefficient.toString());
@@ -155,7 +159,7 @@ public class RegressionUtil {
 		return term;
 	}
 
-	private static Equation.Term formatPredictorTerm(Qdb qdb, RegressionModel model, PredictorTerm predictorTerm) {
+	private static Equation.Term formatPredictorTerm(Qdb qdb, PMML pmml, RegressionModel model, PredictorTerm predictorTerm) {
 		Equation.Term term = new Equation.Term();
 
 		Double coefficient = predictorTerm.getCoefficient();
@@ -164,7 +168,7 @@ public class RegressionUtil {
 		ArrayList<Equation.Term> crossTerms = new ArrayList<Equation.Term>();
 		for (FieldRef fieldRef: predictorTerm.getFieldRefs()){
 			FieldName descriptorName = fieldRef.getField();
-			Equation.Term cterm = RegressionUtil.createTerm(qdb, model, descriptorName);
+			Equation.Term cterm = RegressionUtil.createTerm(qdb, pmml, model, descriptorName);
 			crossTerms.add(cterm);
 		}
 
@@ -173,15 +177,15 @@ public class RegressionUtil {
 		return term;
 	}
 
-	private static Equation.Term createTerm(Qdb qdb, RegressionModel model, FieldName descriptorName) {
-		DerivedField df = findDerivedField(model, descriptorName);
+	private static Equation.Term createTerm(Qdb qdb, PMML pmml, RegressionModel model, FieldName descriptorName) {
+		DerivedField df = findDerivedField(model.getLocalTransformations(), pmml.getTransformationDictionary(), descriptorName);
 
 		if (df != null && df.getExpression() instanceof Apply){
 			Apply apply = (Apply) df.getExpression();
-			return createTerm(qdb, model, apply);
+			return createTerm(qdb, pmml, model, apply);
 		} else if (df != null && df.getExpression() instanceof NormContinuous){
 			NormContinuous nc = (NormContinuous) df.getExpression();
-			Equation.Term term = RegressionUtil.createTerm(qdb, model, nc.getField());
+			Equation.Term term = RegressionUtil.createTerm(qdb, pmml, model, nc.getField());
 			term.setFunction("norm");
 			return term;
 		}
@@ -193,7 +197,7 @@ public class RegressionUtil {
 		return term;
 	}
 
-	private static Equation.Term createTerm(Qdb qdb, RegressionModel model, Apply apply){
+	private static Equation.Term createTerm(Qdb qdb, PMML pmml, RegressionModel model, Apply apply){
 		Equation.Term term = new Equation.Term();
 
 		String function = formatFunction(apply);
@@ -202,13 +206,13 @@ public class RegressionUtil {
 		ArrayList<Equation.Term> args = new ArrayList<Equation.Term>();
 		for (Expression e: apply.getExpressions()) {
 			if (e instanceof FieldRef) {
-				args.add(RegressionUtil.createTerm(qdb, model, ((FieldRef)e).getField()));
+				args.add(RegressionUtil.createTerm(qdb, pmml, model, ((FieldRef)e).getField()));
 			} else if (e instanceof Constant) {
 				Equation.Term constTerm = new Equation.Term();
 				constTerm.setCoefficient(((Constant)e).getValue());
 				args.add(constTerm);
 			} else if (e instanceof Apply) {
-				args.add(createTerm(qdb, model, (Apply) e));
+				args.add(createTerm(qdb, pmml, model, (Apply) e));
 			} else {
 				throw new IllegalArgumentException(e.toString());
 			}
@@ -226,14 +230,24 @@ public class RegressionUtil {
 		return descriptor;
 	}
 
-
-	private static DerivedField findDerivedField(RegressionModel model, FieldName descriptorName) {
-		LocalTransformations tr = model.getLocalTransformations();
-		if (tr != null) {
-			for (DerivedField df: tr.getDerivedFields()) {
-				if (descriptorName.equals(df.getName())) {
-					return df;
-				}
+	private static DerivedField findDerivedField(LocalTransformations localTransformations, TransformationDictionary globalTransformations, FieldName descriptorName) {
+		DerivedField result = null;
+		
+		if (localTransformations != null) {
+			result = findDerivedField(localTransformations.getDerivedFields(), descriptorName);
+		}
+		
+		if (result == null && globalTransformations != null) {
+			result = findDerivedField(globalTransformations.getDerivedFields(), descriptorName);
+		}
+		
+		return result;
+	}
+	
+	private static DerivedField findDerivedField(List<DerivedField> fields, FieldName name) {
+		for (DerivedField i: fields) {
+			if (name.equals(i.getName())) {
+				return i;
 			}
 		}
 		return null;
