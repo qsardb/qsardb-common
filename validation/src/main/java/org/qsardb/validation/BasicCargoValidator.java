@@ -43,7 +43,13 @@ public class BasicCargoValidator extends CargoValidator {
 	private void validateSize() throws IOException {
 		Cargo<?> cargo = (Cargo<?>)getEntity();
 
-		InputStream is = cargo.getInputStream();
+		InputStream is;
+		try{
+			is = cargo.getInputStream();
+		} catch (FileNotFoundException ex) {
+			error("Missing payload");
+			return;
+		}
 
 		int size = 0;
 
