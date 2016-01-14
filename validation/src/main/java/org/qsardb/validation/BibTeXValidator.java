@@ -22,15 +22,13 @@ public class BibTeXValidator extends CargoValidator<BibTeXCargo> {
 	public void validate() throws IOException {
 		BibTeXCargo cargo = getEntity();
 
-		String bibtex = cargo.loadString();
-
 		BibTeXDatabase database;
 
 		try {
+			String bibtex = cargo.loadString();
 			database = parseBibTeX(bibtex);
 		} catch(Exception e){
 			error("Failed to parse BibTeX", e);
-
 			return;
 		}
 
