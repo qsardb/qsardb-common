@@ -37,7 +37,7 @@ public class CompoundValidator extends ContainerValidator<Compound> {
 		Compound compound = getEntity();
 
 		String cas = compound.getCas();
-		if(cas != null && !validateCas(cas)){
+		if(cas != null && !cas.isEmpty() && !validateCas(cas)){
 			error("Invalid Cas \'" + cas + "\'");
 		}
 	}
