@@ -46,13 +46,9 @@ public class PMMLValidator extends CargoValidator<PMMLCargo> {
 
 		if(models.size() < 1){
 			error("Missing Model element");
-
 			return;
-		} else
-
-		if(models.size() > 1){
+		} else if(models.size() > 1){
 			error("Too many Model elements");
-
 			return;
 		}
 
@@ -77,8 +73,13 @@ public class PMMLValidator extends CargoValidator<PMMLCargo> {
 					break;
 				case PREDICTED:
 					Property property = FieldNameUtil.decodeProperty(qdb, name);
+					String propertyId = FieldNameUtil.decodePropertyId(name);
 					if(isMissing(property)){
-						error("Unknown Property Id \'" + FieldNameUtil.decodePropertyId(name) + "\'");
+						error("Unknown Property Id \'" + propertyId + "\'");
+						return;
+					}
+					if(!getEntity().getContainer().getProperty().equals(property)) {
+						error("Model's Property Id links to different property: "+propertyId);
 					}
 					break;
 				default:
