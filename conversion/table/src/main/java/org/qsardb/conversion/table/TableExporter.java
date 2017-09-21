@@ -26,10 +26,20 @@ public abstract class TableExporter extends Table implements Closeable {
 		loadParameters(qdb.getPropertyRegistry());
 		loadParameters(qdb.getDescriptorRegistry());
 	}
-	
+
 	public void prepareModel(Model model) {
+		PredictionRegistry predRegistry = model.getQdb().getPredictionRegistry();
+		Collection<Prediction> predictions = predRegistry.getByModel(model);
+		prepareModelPredictions(model, predictions);
+	}
+
+	public void preparePrediction(Prediction prediction) {
+		Model model = prediction.getModel();
+		prepareModelPredictions(model, Collections.singleton(prediction));
+	}
+
+	private void prepareModelPredictions(Model model, Collection<Prediction> predictions) {
 		Qdb qdb = model.getQdb();
-		Collection<Prediction> predictions = qdb.getPredictionRegistry().getByModel(model);
 		for (Prediction p: predictions) {
 			Set<String> ids = loadValues(p).keySet();
 			addCompounds(qdb.getCompoundRegistry().getAll(ids));
