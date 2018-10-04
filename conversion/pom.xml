@@ -12,18 +12,6 @@
 	<artifactId>conversion</artifactId>
 	<packaging>pom</packaging>
 
-	<organization>
-		<name>University of Tartu</name>
-		<url>http://www.ut.ee/en</url>
-	</organization>
-	<licenses>
-		<license>
-			<name>New BSD License</name>
-			<url>http://www.opensource.org/licenses/bsd-license.php</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
 	<modules>
 		<module>codessa</module>
 		<module>csv</module>
@@ -35,16 +23,6 @@
 		<module>spreadsheet</module>
 		<module>table</module>
 	</modules>
-
-	<scm>
-		<connection>scm:git:git@github.com:qsardb/qsardb-conversion.git</connection>
-		<developerConnection>scm:git:git@github.com:qsardb/qsardb-conversion.git</developerConnection>
-		<url>git@github.com:qsardb/qsardb-conversion.git</url>
-	</scm>
-	<issueManagement>
-		<system>GitHub</system>
-		<url>https://github.com/qsardb/qsardb-conversion/issues</url>
-	</issueManagement>
 
 	<dependencyManagement>
 		<dependencies>
@@ -81,16 +59,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>
