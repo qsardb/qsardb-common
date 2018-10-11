@@ -46,9 +46,6 @@
 					<keepLineColumn>false</keepLineColumn>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>
 		</plugins>
 	</build>
 </project>

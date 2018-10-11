@@ -35,12 +35,4 @@
 			<url>http://repository.apache.org/content/groups/snapshots/</url>
 		</repository>
 	</repositories>
-
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 </project>
