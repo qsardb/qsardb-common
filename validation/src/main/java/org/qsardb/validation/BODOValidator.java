@@ -33,7 +33,7 @@ public class BODOValidator extends CargoValidator<BODOCargo> {
 		try {
 			bodoDescriptor = cargo.loadBodoDescriptor();
 		} catch(Exception e){
-			error("Failed to parse YAML", e);
+			error("Failed to parse BODO cargo", e);
 
 			return;
 		}
