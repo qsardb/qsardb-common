@@ -3,10 +3,19 @@
  */
 package org.qsardb.conversion.sdfile;
 
-import java.io.*;
-import java.util.*;
-
-import org.qsardb.conversion.table.*;
+import java.io.Closeable;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import org.qsardb.conversion.table.Cell;
+import org.qsardb.conversion.table.Column;
+import org.qsardb.conversion.table.Row;
 
 class CompoundIterator implements Iterator<Row>, Closeable {
 
@@ -109,57 +118,39 @@ class CompoundIterator implements Iterator<Row>, Closeable {
 
 		Map<Column, Cell> values = new LinkedHashMap<Column, Cell>();
 
-		fields:
-		for(int i = 0; true; i++){
-			String line = reader.readLine();
-			if(line == null){
-				throw new EOFException();
-			} // End if
+		String name = null;
+		StringBuilder data = new StringBuilder();
 
-			if(line.equals("") && i == 0){
-				// Extra blank line between the end of the molfile and the beginning of the first data item
-			} else
-
-			if(line.startsWith(">")){
-				int nameBegin = line.indexOf('<');
-				int nameEnd = line.indexOf('>', nameBegin);
-
-				String name = line.substring(nameBegin + 1, nameEnd);
-
-				StringBuilder sb = new StringBuilder();
-
-				String sep = "";
-
-				while(true){
-					line = reader.readLine();
-					if(line == null){
-						throw new EOFException();
-					} // End if
-
-					if(line.equals("")){
-						break;
-					} else
-
-					if(line.equals("$$$$")){
-						break fields;
-					}
-
-					sb.append(sep);
-					sep = NEWLINE;
-
-					sb.append(line);
+		for (String lin; (lin = reader.readLine()) != null; ) {
+			if (lin.startsWith("> ") && name == null && data.length() == 0) {
+				int begin = lin.indexOf("<") + 1;
+				int end = lin.indexOf(">", begin);
+				if (begin < 3 || end - begin < 1) {
+					throw new IOException("Error parsing line: " + (reader.getLineNumber() + 1));
 				}
+				name = lin.substring(begin, end);
+			} else if (!lin.isEmpty() && name != null) {
+				if (data.length() > 0) {
+					data.append(NEWLINE);
+				}
+				data.append(lin);
+			} else if (lin.isEmpty() && name != null) {
+				values.put(new Column(name), new Cell(data.toString()));
 
-				values.put(new Column(name), new Cell(sb.toString()));
-			} else
-
-			if(line.equals("$$$$")){
-				break fields;
-			} else
-
-			{
-				throw new IOException("Error parsing at line " + String.valueOf(reader.getLineNumber() + 1));
+				name = null;
+				data = new StringBuilder();
+			} else if (lin.isEmpty() && name == null && data.length() == 0) {
+				continue;
+			} else if (lin.equals("$$$$") && name == null && data.length() == 0) {
+				break;
+			} else {
+				throw new IOException("Error parsing line: " + (reader.getLineNumber() + 1));
 			}
+		}
+
+		// Accept files not terminated with $$$$.
+		if (name != null) {
+			values.put(new Column(name), new Cell(data.toString()));
 		}
 
 		return values;
