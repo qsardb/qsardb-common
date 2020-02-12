@@ -46,7 +46,7 @@ public class CompoundValidator extends ContainerValidator<Compound> {
 		Compound compound = getEntity();
 
 		String inChI = compound.getInChI();
-		if(inChI != null && !validateInChI(inChI)){
+		if(inChI != null && !inChI.isEmpty() && !validateInChI(inChI)){
 			error("Invalid InChI \'" + inChI + "\'");
 		}
 	}
