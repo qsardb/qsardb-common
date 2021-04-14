@@ -3,27 +3,30 @@
  */
 package org.qsardb.conversion.csv;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Iterator;
 
-import org.apache.commons.csv.*;
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 public class CsvUtil {
 
 	private CsvUtil(){
 	}
 
-	static
-	public CSVFormat getFormat(File file) throws IOException {
-		char[] delimiters = {',', ';', '\t'};
+	public static CSVFormat getFormat(File file) throws IOException {
+		char[] delimiters = {',', '\t', ';'};
 		char[] encapsulators = {'\"', '\''};
 
 		for(char delimiter : delimiters){
-
 			for(char encapsulator : encapsulators){
 				CSVFormat format = CSVFormat.newFormat(delimiter).withQuote(encapsulator);
-
 				if(checkFormat(file, format)){
 					return format;
 				}
@@ -33,8 +36,7 @@ public class CsvUtil {
 		throw new IOException("Unknown CSV format");
 	}
 
-	static
-	public boolean checkFormat(File file, CSVFormat format) throws IOException {
+	public static boolean checkFormat(File file, CSVFormat format) throws IOException {
 		InputStream is = new FileInputStream(file);
 
 		try {
@@ -44,32 +46,28 @@ public class CsvUtil {
 		}
 	}
 
-	static
-	public boolean checkFormat(InputStream is, CSVFormat format) throws IOException {
+	public static boolean checkFormat(InputStream is, CSVFormat format) throws IOException {
 		Reader reader = new InputStreamReader(is, "UTF-8");
 
 		try {
+			int guessColumns = 0;
+
 			CSVParser parser = new CSVParser(reader, format);
-
-			int count = 0;
-
 			Iterator<CSVRecord> records = parser.iterator();
-
-			for(int i = 0; records.hasNext() && i < 100; i++){
+			for (int i=0; records.hasNext() && i < 100; i++) {
 				CSVRecord record = records.next();
+				int columns = record.size();
 
-				if(count == 0 || count == record.size()){
-					count = record.size();
-				} else
-
-				{
-					count = -1;
-
-					break;
+				if (columns == 1 && record.get(0).trim().isEmpty()) {
+					// skip empty lines
+				} else if (guessColumns == 0) {
+					guessColumns = columns;
+				} else if (columns != guessColumns) {
+					return false;
 				}
 			}
 
-			return (count > 1);
+			return (guessColumns > 1);
 		} finally {
 			reader.close();
 		}

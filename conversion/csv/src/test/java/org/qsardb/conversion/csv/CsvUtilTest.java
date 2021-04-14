@@ -55,6 +55,28 @@ public class CsvUtilTest {
 		assertEquals('\"', (char)format.getQuoteCharacter());
 	}
 
+	@Test
+	public void checkFormatTsv() throws IOException {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Year\tMake\tModel\tLength").append('\n');
+		sb.append("1997\tFord\tE350\t2,34").append('\n');
+		sb.append("2000\tMercury\tCougar\t2,38").append('\n');
+		sb.append("\n");
+
+		CSVFormat format;
+
+		File file = createFile(sb.toString());
+
+		try {
+			format = CsvUtil.getFormat(file);
+		} finally {
+			file.delete();
+		}
+
+		assertEquals('\t', format.getDelimiter());
+		assertEquals('\"', (char)format.getQuoteCharacter());
+	}
+
 	static
 	private File createFile(String string) throws IOException {
 		File file = File.createTempFile("test", ".csv");
