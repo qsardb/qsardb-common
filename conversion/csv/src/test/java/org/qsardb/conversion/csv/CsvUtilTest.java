@@ -3,32 +3,25 @@
  */
 package org.qsardb.conversion.csv;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
-import org.apache.commons.csv.*;
+import org.apache.commons.csv.CSVFormat;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class CsvUtilTest {
 
 	@Test
 	public void checkFormatCsv() throws IOException {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("Year,Make,Model,Length").append('\n');
 		sb.append("1997,Ford,E350,2.34").append('\n');
 		sb.append("2000,Mercury,Cougar,2.38");
 
-		CSVFormat format;
-
-		File file = createFile(sb.toString());
-
-		try {
-			format = CsvUtil.getFormat(file);
-		} finally {
-			file.delete();
-		}
+		CSVFormat format = getFormat(sb.toString());
 
 		assertEquals(',', format.getDelimiter());
 		assertEquals('\"', (char)format.getQuoteCharacter());
@@ -36,20 +29,12 @@ public class CsvUtilTest {
 
 	@Test
 	public void checkFormatDsv() throws IOException {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("Year;Make;Model;Length").append('\n');
 		sb.append("1997;Ford;E350;2,34").append('\n');
 		sb.append("2000;Mercury;Cougar;2,38");
 
-		CSVFormat format;
-
-		File file = createFile(sb.toString());
-
-		try {
-			format = CsvUtil.getFormat(file);
-		} finally {
-			file.delete();
-		}
+		CSVFormat format = getFormat(sb.toString());
 
 		assertEquals(';', format.getDelimiter());
 		assertEquals('\"', (char)format.getQuoteCharacter());
@@ -58,37 +43,28 @@ public class CsvUtilTest {
 	@Test
 	public void checkFormatTsv() throws IOException {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Year\tMake\tModel\tLength").append('\n');
-		sb.append("1997\tFord\tE350\t2,34").append('\n');
-		sb.append("2000\tMercury\tCougar\t2,38").append('\n');
+		sb.append("H1\tH2\tH3\n");
+		sb.append("a,b\tc;\t1.0\n");
+		sb.append("a'b\t,c\t2.0\n");
 		sb.append("\n");
 
-		CSVFormat format;
-
-		File file = createFile(sb.toString());
-
-		try {
-			format = CsvUtil.getFormat(file);
-		} finally {
-			file.delete();
-		}
+		CSVFormat format = getFormat(sb.toString());
 
 		assertEquals('\t', format.getDelimiter());
 		assertEquals('\"', (char)format.getQuoteCharacter());
 	}
 
-	static
-	private File createFile(String string) throws IOException {
+	private static CSVFormat getFormat(String string) throws IOException {
 		File file = File.createTempFile("test", ".csv");
+		file.deleteOnExit();
 
 		FileWriter writer = new FileWriter(file);
-
 		try {
 			writer.write(string);
 		} finally {
 			writer.close();
 		}
 
-		return file;
+		return CsvUtil.getFormat(file);
 	}
 }
