@@ -34,11 +34,11 @@ public class PredictionRegistryValidator extends ContainerRegistryValidator<Pred
 			Collection<Prediction> testingPredictions = predictions.getByModelAndType(model, Prediction.Type.TESTING);
 
 			if(trainingPredictions.size() < 1){
-				error("Model Id \'" + model.getId() + "\' is missing a training Prediction");
+				error("Model Id \'" + model.getId() + "\' is without a training set");
 			} else
 
 			if(trainingPredictions.size() > 1){
-				error("Model Id \'" + model.getId() + "\' has too many training Predictions");
+				error("Model Id \'" + model.getId() + "\' has multiple training sets");
 			}
 		}
 	}
