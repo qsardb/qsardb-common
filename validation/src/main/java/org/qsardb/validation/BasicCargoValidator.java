@@ -75,7 +75,7 @@ public class BasicCargoValidator extends CargoValidator {
 		} else
 
 		if(size > limit){
-			error("Over-size payload (max " + limit + " bytes)");
+			warning("Over-size payload (max " + limit + " bytes)");
 		}
 	}
 
