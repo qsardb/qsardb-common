@@ -32,9 +32,11 @@ public class PMMLValidator extends CargoValidator<PMMLCargo> {
 
 		try {
 			pmml = cargo.loadPmml();
+		} catch(IllegalArgumentException ex) {
+			error("Failed to parse PMML", ex);
+			return;
 		} catch(QdbException qe){
 			error("Failed to parse PMML", qe);
-
 			return;
 		}
 
