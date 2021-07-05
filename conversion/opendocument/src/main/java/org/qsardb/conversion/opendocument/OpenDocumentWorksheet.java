@@ -67,13 +67,19 @@ public class OpenDocumentWorksheet extends Worksheet {
 	@Override
 	public String getValueAt(int row, int column){
 		Cell<?> cell = this.sheet.getCellAt(column, row);
-
 		Object value = cell.getValue();
 		if(value != null){
-			return String.valueOf(value);
+			return null;
 		}
 
-		return null;
+		if (value instanceof Float) {
+			Float number = (Float) value;
+			if (number.intValue() == number.floatValue()) {
+				return String.valueOf(number.intValue());
+			}
+		}
+
+		return String.valueOf(value);
 	}
 
 	private boolean hasValueAt(int row, int column){
