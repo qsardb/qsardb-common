@@ -72,12 +72,20 @@ public abstract class TableExporter extends Table implements Closeable {
 	}
 
 	private void addCompounds(Collection<Compound> compounds) {
+		HashMap<Compound, String> smiles = loadSmiles(compounds);
+		boolean haveSmilesColumn = !smiles.isEmpty();
+
 		for (Compound c: compounds) {
 			Map<Column, Cell> values = new LinkedHashMap<Column, Cell>();
 			addAttribute(c.getId(), ID_COLUMN, values);
 			addAttribute(c.getName(), NAME_COLUMN, values);
 			addAttribute(c.getCas(), CAS_COLUMN, values);
 			addAttribute(c.getInChI(), INCHI_COLUMN, values);
+
+			if (haveSmilesColumn) {
+				addAttribute(smiles.get(c), SMILES_COLUMN, values);
+			}
+
 			rows.add(new Row(c.getId(), values));
 		}
 	}
@@ -113,8 +121,27 @@ public abstract class TableExporter extends Table implements Closeable {
 		}
 	}
 
+	private HashMap<Compound, String> loadSmiles(Collection<Compound> compounds) {
+		HashMap<Compound, String> smiles = new HashMap<Compound, String>();
+		for (Compound c: compounds) {
+			for (String cargoId : c.getCargos()) {
+				if (cargoId.endsWith("smiles")) {
+					Cargo<Compound> cargo = c.getCargo(cargoId);
+					try {
+						smiles.put(c, cargo.loadString());
+					} catch (IOException ex) {
+						throw new RuntimeException("Can't load "+cargoId+" for "+c.getId(), ex);
+					}
+				}
+			}
+		}
+
+		return smiles;
+	}
+
 	private static final Column ID_COLUMN = new Column("ID");
 	private static final Column NAME_COLUMN = new Column("Name");
 	private static final Column CAS_COLUMN = new Column("CAS");
 	private static final Column INCHI_COLUMN = new Column("InChi");
+	private static final Column SMILES_COLUMN = new Column("SMILES");
 }
