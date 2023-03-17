@@ -3,24 +3,35 @@
  */
 package org.qsardb.evaluation;
 
-import java.text.*;
-import java.util.*;
-
-import org.qsardb.cargo.pmml.*;
-import org.qsardb.conversion.regression.*;
-import org.qsardb.model.*;
-
-import org.jpmml.evaluator.*;
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import org.dmg.pmml.DataField;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.PMML;
+import org.jpmml.evaluator.EvaluatorUtil;
+import org.jpmml.evaluator.ModelEvaluatorFactory;
+import org.jpmml.evaluator.NeuralNetworkEvaluator;
+import org.jpmml.evaluator.RegressionModelEvaluator;
+import org.jpmml.manager.ModelManager;
+import org.jpmml.manager.PMMLManager;
+import org.qsardb.cargo.pmml.FieldNameUtil;
+import org.qsardb.conversion.regression.DisplayFormat;
+import org.qsardb.conversion.regression.Equation;
+import org.qsardb.conversion.regression.EquationFormatter;
+import org.qsardb.conversion.regression.QdbDisplayFormat;
+import org.qsardb.conversion.regression.RegressionUtil;
+import org.qsardb.model.Descriptor;
+import org.qsardb.model.Property;
+import org.qsardb.model.Qdb;
 
 public class PMMLEvaluator extends Evaluator {
 
 	private ModelManager<?> modelManager = null;
 
-
-	public PMMLEvaluator(Qdb qdb, PMML pmml){
+	public PMMLEvaluator(Qdb qdb, PMML pmml) {
 		super(qdb);
 
 		PMMLManager pmmlManager = new PMMLManager(pmml);
@@ -29,16 +40,16 @@ public class PMMLEvaluator extends Evaluator {
 	}
 
 	@Override
-	protected String loadSummary(){
+	protected String loadSummary() {
 		ModelManager<?> modelManager = getModelManager();
 
 		return modelManager.getSummary();
 	}
 
 	@Override
-	protected Property loadProperty(){
+	protected Property loadProperty() {
 		List<FieldName> fields = getModelManager().getPredictedFields();
-		if(fields.size() != 1){
+		if (fields.size() != 1) {
 			throw new IllegalArgumentException();
 		}
 
@@ -48,11 +59,11 @@ public class PMMLEvaluator extends Evaluator {
 	}
 
 	@Override
-	protected List<Descriptor> loadDescriptors(){
+	protected List<Descriptor> loadDescriptors() {
 		List<Descriptor> descriptors = new ArrayList<Descriptor>();
 
 		List<FieldName> fields = getModelManager().getActiveFields();
-		for(FieldName field : fields){
+		for (FieldName field : fields) {
 			descriptors.add(getDescriptor(FieldNameUtil.decodeDescriptorId(field)));
 		}
 
@@ -61,29 +72,29 @@ public class PMMLEvaluator extends Evaluator {
 
 	@Override
 	public Result evaluate(Map<Descriptor, ?> values) throws Exception {
-		org.jpmml.evaluator.Evaluator evaluator =
-			(org.jpmml.evaluator.Evaluator) getModelManager();
+		org.jpmml.evaluator.Evaluator evaluator
+				= (org.jpmml.evaluator.Evaluator) getModelManager();
 
 		Map<FieldName, org.jpmml.evaluator.FieldValue> arguments = new LinkedHashMap<FieldName, org.jpmml.evaluator.FieldValue>();
 
 		Map<FieldName, DataField> dataFieldMap = new LinkedHashMap<FieldName, DataField>();
 
 		List<Descriptor> descriptors = getDescriptors();
-		for(Descriptor descriptor : descriptors){
+		for (Descriptor descriptor : descriptors) {
 			FieldName field = FieldNameUtil.encodeDescriptor(descriptor);
 
 			DataField dataField = dataFieldMap.get(field);
-			if(dataField == null){
+			if (dataField == null) {
 				dataField = evaluator.getDataField(field);
 
 				// For compatibility with generic PMML producer software
-				if(dataField == null){
+				if (dataField == null) {
 					field = new FieldName(descriptor.getId());
 
 					dataField = evaluator.getDataField(field);
 				} // End if
 
-				if(dataField == null){
+				if (dataField == null) {
 					throw new IllegalArgumentException();
 				}
 
@@ -104,25 +115,21 @@ public class PMMLEvaluator extends Evaluator {
 	@Override
 	public Object evaluateAndFormat(Map<Descriptor, ?> values, DecimalFormat format) throws Exception {
 		ModelManager<?> modelManager = getModelManager();
+		Result result = evaluate(values);
 
-		if(modelManager instanceof RegressionModelEvaluator){
-			Result result = evaluate(values);
-
+		if (modelManager instanceof RegressionModelEvaluator) {
 			try {
-				RegressionModelEvaluator evaluator = (RegressionModelEvaluator)modelManager;
+				RegressionModelEvaluator evaluator = (RegressionModelEvaluator) modelManager;
 				Equation equation = RegressionUtil.format(getQdb(), evaluator.getPMML());
-				return super.formatRegressionResult(equation, result, format);
+				return formatRegressionResult(equation, result, format);
 			} catch (IllegalArgumentException ex) {
 				return super.formatResult(result, format);
 			}
-		}
-		else if(modelManager instanceof NeuralNetworkEvaluator){
-			Result result = evaluate(values);
-
+		} else if (modelManager instanceof NeuralNetworkEvaluator) {
 			// if the ANN model has only one output parameter, then extract its value from the map
 			if (result.getValue() instanceof Map) {
-				Map map = (Map)result.getValue();
-				if(map.size() == 1){
+				Map map = (Map) result.getValue();
+				if (map.size() == 1) {
 					Object value = map.values().iterator().next();
 					result = new Result(value, result.getParameters());
 				}
@@ -131,7 +138,46 @@ public class PMMLEvaluator extends Evaluator {
 			return super.formatResult(result, format);
 		}
 
-		return super.evaluateAndFormat(values, format);
+		return super.formatResult(result, format);
+	}
+
+	private String formatRegressionResult(Equation equation, final Result result, DecimalFormat format) {
+		StringBuilder sb = new StringBuilder();
+
+		EquationFormatter formatter = new EquationFormatter();
+
+		Property property = getProperty();
+
+		DisplayFormat nameFormat = new QdbDisplayFormat(getQdb());
+		sb.append(formatter.formatEquation(equation, nameFormat));
+
+		DisplayFormat valueFormat = new DisplayFormat() {
+
+			@Override
+			public String formatLeftHandSide(String identifier) {
+				return null;
+			}
+
+			@Override
+			public String formatRightHandSide(String identifier) {
+				Descriptor descriptor = getQdb().getDescriptor(identifier);
+
+				Object value = (result.getParameters()).get(descriptor);
+
+				return format(value, getFormat(descriptor));
+			}
+		};
+		sb.append(' ').append('=').append(' ');
+		sb.append(formatter.formatRightHandSide(equation.getTerms(), valueFormat));
+
+		if (format == null) {
+			format = getFormat(property);
+		}
+
+		sb.append(' ').append('=').append(' ');
+		sb.append(format(result.getValue(), format));
+
+		return sb.toString();
 	}
 
 	@Override
@@ -144,11 +190,11 @@ public class PMMLEvaluator extends Evaluator {
 		}
 	}
 
-	public ModelManager<?> getModelManager(){
+	public ModelManager<?> getModelManager() {
 		return this.modelManager;
 	}
 
-	private void setModelManager(ModelManager<?> modelManager){
+	private void setModelManager(ModelManager<?> modelManager) {
 		this.modelManager = modelManager;
 	}
 }

@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.logging.*;
 
 import org.qsardb.cargo.map.*;
-import org.qsardb.conversion.regression.*;
 import org.qsardb.model.*;
 
 abstract
@@ -57,7 +56,7 @@ public class Evaluator {
 	}
 
 	protected String formatResult(final Result result, DecimalFormat format){
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		Property property = getProperty();
 		sb.append(property.getName());
@@ -68,45 +67,6 @@ public class Evaluator {
 			format = getFormat(property);
 		}
 
-		sb.append(format(result.getValue(), format));
-
-		return sb.toString();
-	}
-
-	protected String formatRegressionResult(Equation equation, final Result result, DecimalFormat format){
-		StringBuilder sb = new StringBuilder();
-
-		EquationFormatter formatter = new EquationFormatter();
-
-		Property property = getProperty();
-
-		DisplayFormat nameFormat = new QdbDisplayFormat(getQdb());
-		sb.append(formatter.formatEquation(equation, nameFormat));
-
-		DisplayFormat valueFormat = new DisplayFormat(){
-
-			@Override
-			public String formatLeftHandSide(String identifier){
-				return null;
-			}
-
-			@Override
-			public String formatRightHandSide(String identifier){
-				Descriptor descriptor = getQdb().getDescriptor(identifier);
-
-				Object value = (result.getParameters()).get(descriptor);
-
-				return format(value, getFormat(descriptor));
-			}
-		};
-		sb.append(' ').append('=').append(' ');
-		sb.append(formatter.formatRightHandSide(equation.getTerms(), valueFormat));
-
-		if(format == null){
-			format = getFormat(property);
-		}
-
-		sb.append(' ').append('=').append(' ');
 		sb.append(format(result.getValue(), format));
 
 		return sb.toString();
@@ -163,7 +123,7 @@ public class Evaluator {
 	}
 
 	static
-	private String format(Object value, DecimalFormat format){
+	protected String format(Object value, DecimalFormat format){
 
 		if(format != null){
 
