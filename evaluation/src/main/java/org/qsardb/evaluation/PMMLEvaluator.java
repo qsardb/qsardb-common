@@ -10,8 +10,12 @@ import java.util.List;
 import java.util.Map;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MultipleModelMethodType;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.Segmentation;
+import org.jpmml.evaluator.DefaultClassificationMap;
 import org.jpmml.evaluator.EvaluatorUtil;
+import org.jpmml.evaluator.MiningModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.NeuralNetworkEvaluator;
 import org.jpmml.evaluator.RegressionModelEvaluator;
@@ -106,17 +110,30 @@ public class PMMLEvaluator extends Evaluator {
 			arguments.put(field, fieldValue);
 		}
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> jpmmlResult = evaluator.evaluate(arguments);
 
-		Object targetValue = result.get(evaluator.getTargetField());
-		return new Result(EvaluatorUtil.decode(targetValue), values);
+		Object targetValue = jpmmlResult.get(evaluator.getTargetField());
+		Result result = new Result(EvaluatorUtil.decode(targetValue), values);
+
+		// probability for classification with ensemble models (e.g. RF)
+		if (evaluator instanceof MiningModelEvaluator) {
+			MiningModelEvaluator mme = (MiningModelEvaluator) evaluator;
+			Segmentation segmentation = mme.getModel().getSegmentation();
+			if (segmentation.getMultipleModelMethod() == MultipleModelMethodType.MAJORITY_VOTE
+					&& targetValue instanceof DefaultClassificationMap) {
+				String c = (String) result.getValue();
+				Double p = ((DefaultClassificationMap)targetValue).getProbability(c);
+				result.setProbability(p);
+			}
+		}
+		return result;
 	}
 
 	@Override
 	public Object evaluateAndFormat(Map<Descriptor, ?> values, DecimalFormat format) throws Exception {
-		ModelManager<?> modelManager = getModelManager();
 		Result result = evaluate(values);
 
+		ModelManager<?> modelManager = getModelManager();
 		if (modelManager instanceof RegressionModelEvaluator) {
 			try {
 				RegressionModelEvaluator evaluator = (RegressionModelEvaluator) modelManager;

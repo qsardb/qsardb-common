@@ -69,6 +69,10 @@ public class Evaluator {
 
 		sb.append(format(result.getValue(), format));
 
+		if (result.getProbability() != null) {
+			sb.append(String.format(" (p=%.2f)", result.getProbability()));
+		}
+
 		return sb.toString();
 	}
 
@@ -183,6 +187,7 @@ public class Evaluator {
 	public class Result {
 
 		private Object value = null;
+		private Double probability = null;
 
 		private Map<Descriptor, ?> parameters = null;
 
@@ -206,6 +211,14 @@ public class Evaluator {
 
 		private void setParameters(Map<Descriptor, ?> parameters){
 			this.parameters = parameters;
+		}
+
+		public Double getProbability() {
+			return this.probability;
+		}
+
+		void setProbability(Double p) {
+			this.probability = p;
 		}
 	}
 
