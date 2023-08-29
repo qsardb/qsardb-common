@@ -30,22 +30,28 @@ public class ExcelWorksheet extends Worksheet {
 		return this.size;
 	}
 
-	private Dimension calculateSize(){
-		int rows = 0;
-		int columns = 0;
+	private Dimension calculateSize() {
+		int lastRow = 0;
+		int lastColumn = 0;
 
-		if(this.sheet.getPhysicalNumberOfRows() > 0){
-			rows = this.sheet.getLastRowNum() + 1;
+		for (int rowIdx = this.sheet.getLastRowNum(); rowIdx >= 0; rowIdx--) {
+			Row row = this.sheet.getRow(rowIdx);
+			if (row == null) {
+				continue;
+			}
 
-			for(Row row : this.sheet){
-
-				if(row.getPhysicalNumberOfCells() > 0){
-					columns = Math.max(columns, row.getLastCellNum());
+			for (int colIdx = row.getLastCellNum()-1; colIdx >= 0; colIdx--) {
+				if (getValueAt(row.getCell(colIdx)) != null) {
+					lastColumn = Math.max(lastColumn, colIdx+1);
+					if (lastRow == 0) {
+						lastRow = rowIdx + 1;
+					}
+					break;
 				}
 			}
 		}
 
-		return new Dimension(rows, columns);
+		return new Dimension(lastRow, lastColumn);
 	}
 
 	@Override
